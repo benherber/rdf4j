@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.rdf4j.http.server;
 
+import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.MDC;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -24,6 +27,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 public abstract class ServerInterceptor implements HandlerInterceptor {
 
+	private static final String REQUEST_ID = "requestId";
 	private volatile String origThreadName;
 
 	@Override
@@ -31,6 +35,7 @@ public abstract class ServerInterceptor implements HandlerInterceptor {
 			throws Exception {
 		origThreadName = Thread.currentThread().getName();
 		Thread.currentThread().setName(getThreadName());
+		MDC.put(REQUEST_ID, UUID.randomUUID().toString());
 
 		setRequestAttributes(request);
 
@@ -43,6 +48,7 @@ public abstract class ServerInterceptor implements HandlerInterceptor {
 		try {
 			cleanUpResources();
 		} finally {
+			MDC.remove(REQUEST_ID);
 			Thread.currentThread().setName(origThreadName);
 		}
 	}
