@@ -30,6 +30,10 @@ import org.eclipse.rdf4j.query.resultio.TupleQueryResultWriterRegistry;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -38,6 +42,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  * @author Herko ter Horst
  */
+@RestController
 public class RepositoryListController extends AbstractController {
 
 	private RepositoryManager repositoryManager;
@@ -48,6 +53,14 @@ public class RepositoryListController extends AbstractController {
 
 	public void setRepositoryManager(RepositoryManager repMan) {
 		repositoryManager = repMan;
+	}
+
+	@RequestMapping("/repositories")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

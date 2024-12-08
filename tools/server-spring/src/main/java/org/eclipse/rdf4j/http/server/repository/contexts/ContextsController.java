@@ -33,6 +33,10 @@ import org.eclipse.rdf4j.query.resultio.TupleQueryResultWriterRegistry;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -41,10 +45,20 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  * @author Herko ter Horst
  */
+@RestController
 public class ContextsController extends AbstractController {
 
 	public ContextsController() throws ApplicationContextException {
 		setSupportedMethods(METHOD_GET, METHOD_HEAD);
+	}
+
+	@RequestMapping({ "/repositories/{repository}/contexts", "/repositories/{repository}/rdf-graphs" })
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

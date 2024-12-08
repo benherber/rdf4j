@@ -19,6 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.rdf4j.common.webapp.views.SimpleResponseView;
 import org.eclipse.rdf4j.http.protocol.Protocol;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -27,10 +31,19 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  * @author Herko ter Horst
  */
+@RestController
 public class ProtocolController extends AbstractController {
 
 	public ProtocolController() throws ApplicationContextException {
 		setSupportedMethods(METHOD_GET, METHOD_HEAD);
+	}
+
+	@RequestMapping("/protocol")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

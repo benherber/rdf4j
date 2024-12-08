@@ -69,9 +69,14 @@ import org.eclipse.rdf4j.rio.RDFWriterRegistry;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 import org.eclipse.rdf4j.rio.helpers.BasicParserSettings;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.xml.sax.SAXException;
@@ -83,12 +88,22 @@ import org.xml.sax.SAXParseException;
  * @author Herko ter Horst
  * @author Arjohn Kampman
  */
+@RestController
 public class StatementsController extends AbstractController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public StatementsController() throws ApplicationContextException {
 		setSupportedMethods(METHOD_GET, METHOD_POST, METHOD_HEAD, "PUT", "DELETE");
+	}
+
+	@RequestMapping("/repositories/{repository}/statements")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

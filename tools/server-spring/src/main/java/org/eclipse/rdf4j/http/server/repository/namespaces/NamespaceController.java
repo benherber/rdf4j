@@ -35,6 +35,10 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -44,11 +48,22 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @author Herko ter Horst
  * @author Arjohn Kampman
  */
+@RestController
 public class NamespaceController extends AbstractController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public NamespaceController() throws ApplicationContextException {
 		setSupportedMethods(METHOD_GET, METHOD_HEAD, "PUT", "DELETE");
+	}
+
+	@RequestMapping("/repositories/{repository}/namespaces/{nsPrefix}")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore,
+			@NonNull @PathVariable("nsPrefix") final String ignore2
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

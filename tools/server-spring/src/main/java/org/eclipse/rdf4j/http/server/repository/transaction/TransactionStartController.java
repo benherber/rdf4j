@@ -38,6 +38,10 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -46,6 +50,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  * @author Jeen Broekstra
  */
+@RestController
 public class TransactionStartController extends AbstractController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -53,6 +58,15 @@ public class TransactionStartController extends AbstractController {
 
 	public TransactionStartController() throws ApplicationContextException {
 		setSupportedMethods(METHOD_POST);
+	}
+
+	@RequestMapping("/repositories/{repository}/transactions")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

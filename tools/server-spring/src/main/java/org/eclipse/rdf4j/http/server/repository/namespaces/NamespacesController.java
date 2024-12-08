@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.rdf4j.http.server.repository.namespaces;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +36,10 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -48,12 +48,22 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  * @author Herko ter Horst
  */
+@RestController
 public class NamespacesController extends AbstractController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public NamespacesController() throws ApplicationContextException {
 		setSupportedMethods(METHOD_GET, METHOD_HEAD, "DELETE");
+	}
+
+	@RequestMapping("/repositories/{repository}/namespaces")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

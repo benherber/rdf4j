@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.rdf4j.http.server.repository;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.rdf4j.http.server.repository.handler.DefaultQueryRequestHandler;
 import org.eclipse.rdf4j.http.server.repository.handler.DefaultRepositoryRequestHandler;
 import org.eclipse.rdf4j.http.server.repository.handler.QueryRequestHandler;
@@ -20,6 +23,11 @@ import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Handles queries and admin (delete) operations on a repository and renders the results in a format suitable to the
@@ -27,6 +35,7 @@ import org.springframework.context.ApplicationContextException;
  *
  * @author Herko ter Horst
  */
+@RestController
 public class RepositoryController extends AbstractRepositoryController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -35,6 +44,15 @@ public class RepositoryController extends AbstractRepositoryController {
 	private RepositoryRequestHandler repositoryRequestHandler;
 
 	public RepositoryController() throws ApplicationContextException {
+	}
+
+	@RequestMapping("/repositories/{repository}")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	public void setRepositoryManager(RepositoryManager repMan) {

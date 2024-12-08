@@ -46,6 +46,10 @@ import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -54,12 +58,24 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  * @author Jeen Broekstra
  */
+@RestController
 public class GraphController extends AbstractController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public GraphController() throws ApplicationContextException {
 		setSupportedMethods(METHOD_GET, METHOD_HEAD, METHOD_POST, "PUT", "DELETE");
+	}
+
+	@RequestMapping("/repositories/{repository}/rdf-graphs/{graph}")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore,
+			@NonNull @PathVariable("graph") final String ignore2
+
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

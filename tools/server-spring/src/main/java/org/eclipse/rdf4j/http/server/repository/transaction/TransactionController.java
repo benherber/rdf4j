@@ -91,6 +91,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -100,12 +104,23 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  * @author Jeen Broekstra
  */
+@RestController
 public class TransactionController extends AbstractController implements DisposableBean {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public TransactionController() throws ApplicationContextException {
 		setSupportedMethods(METHOD_POST, "PUT", "DELETE");
+	}
+
+	@RequestMapping("/repositories/{repository}/transactions/{xid}")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore,
+			@NonNull @PathVariable("xid") final String ignore2
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override
