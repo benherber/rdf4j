@@ -36,7 +36,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 public class RepositoryControllerTest {
 
 	final String repositoryId = "test-repo";
-	final RepositoryController controller = new RepositoryController();
+	final RepositoryController controller = new RepositoryController(mock());
 
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;

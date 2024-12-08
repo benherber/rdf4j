@@ -12,6 +12,7 @@ package org.eclipse.rdf4j.http.server.repository;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.eclipse.rdf4j.rio.helpers.BasicParserSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.HandlerMapping;
 
 /**
  * Interceptor for repository requests. Should not be a singleton bean! Configure as inner bean in openrdf-servlet.xml
@@ -52,7 +54,6 @@ public class RepositoryInterceptor extends ServerInterceptor {
 	/*-----------*
 	 * Variables *
 	 *-----------*/
-
 	private volatile RepositoryManager repositoryManager;
 
 	private volatile String repositoryID;
@@ -67,17 +68,24 @@ public class RepositoryInterceptor extends ServerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse respons, Object handler) throws Exception {
-		String pathInfoStr = request.getPathInfo();
-		logger.debug("path info: {}", pathInfoStr);
+//		String pathInfoStr = request.getPathInfo();
+//		logger.debug("path info: {}", pathInfoStr);
+//
+//		repositoryID = null;
+//
+//		if (pathInfoStr != null && !pathInfoStr.equals("/")) {
+//			String[] pathInfo = pathInfoStr.substring(1).split("/");
+//			if (pathInfo.length > 0) {
+//				repositoryID = pathInfo[0];
+//				logger.debug("repositoryID is '{}'", repositoryID);
+//			}
+//		}
+		final Object pathVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-		repositoryID = null;
-
-		if (pathInfoStr != null && !pathInfoStr.equals("/")) {
-			String[] pathInfo = pathInfoStr.substring(1).split("/");
-			if (pathInfo.length > 0) {
-				repositoryID = pathInfo[0];
-				logger.debug("repositoryID is '{}'", repositoryID);
-			}
+        //noinspection unchecked
+        repositoryID = ((Map<String, String>) pathVariables).get(REPOSITORY_KEY);
+		if (repositoryID != null) {
+			logger.debug("repositoryID is '{}'", repositoryID);
 		}
 
 		ProtocolUtil.logRequestParameters(request);

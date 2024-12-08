@@ -22,6 +22,7 @@ import org.eclipse.rdf4j.http.server.repository.resolver.RepositoryResolver;
 import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +44,9 @@ public class RepositoryController extends AbstractRepositoryController {
 	private QueryRequestHandler queryRequestHandler;
 	private RepositoryRequestHandler repositoryRequestHandler;
 
-	public RepositoryController() throws ApplicationContextException {
+	@Autowired
+	public RepositoryController(final RepositoryManager repMan) throws ApplicationContextException {
+		setRepositoryManager(repMan);
 	}
 
 	@RequestMapping("/repositories/{repository}")

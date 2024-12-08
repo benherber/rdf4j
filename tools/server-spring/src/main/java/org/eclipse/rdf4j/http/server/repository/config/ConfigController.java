@@ -36,7 +36,12 @@ import org.eclipse.rdf4j.rio.RDFWriterFactory;
 import org.eclipse.rdf4j.rio.RDFWriterRegistry;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -45,18 +50,30 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  * @author Jeen Broekstra
  */
+@RestController
 public class ConfigController extends AbstractController {
 
 	private RepositoryManager repositoryManager;
 
 	private final ModelFactory modelFactory = new LinkedHashModelFactory();
 
-	public ConfigController() throws ApplicationContextException {
+	@Autowired
+	public ConfigController(final RepositoryManager repMan) throws ApplicationContextException {
 		setSupportedMethods(METHOD_GET, METHOD_POST, METHOD_HEAD);
+		setRepositoryManager(repMan);
 	}
 
 	public void setRepositoryManager(RepositoryManager repositoryManager) {
 		this.repositoryManager = repositoryManager;
+	}
+
+	@RequestMapping("/repositories/{repository}/config")
+	public ModelAndView delegateRequest(
+			@NonNull final HttpServletRequest request,
+			@NonNull final HttpServletResponse response,
+			@NonNull @PathVariable("repository") final String ignore
+	) throws Exception {
+		return handleRequest(request, response);
 	}
 
 	@Override

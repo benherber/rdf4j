@@ -36,7 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ConfigControllerTest {
 
 	final String repositoryId = "test-config";
-	final ConfigController controller = new ConfigController();
+	final ConfigController controller = new ConfigController(mock());
 
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
