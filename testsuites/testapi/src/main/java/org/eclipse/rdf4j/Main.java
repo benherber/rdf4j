@@ -56,17 +56,21 @@ public class Main {
 
                 System.out.println("Found Data: ");
                 var query = "SELECT * WHERE {\n" +
-                                  "    GRAPH ?g {\n" +
-                                  "        ?s ?p ?o\n" +
-                                  "    }\n" +
-                                  "}\n";
+                            "    GRAPH ?g {\n" +
+                            "        ?s ?p ?o\n" +
+                            "    }\n" +
+                            "}\n";
                 var preparedQuery = conn.prepareTupleQuery(query);
                 preparedQuery.evaluate(new SPARQLResultsJSONWriter(System.out));
                 query = "SELECT * WHERE {\n" +
-                                  "    ?s ?p ?o .\n" +
-                                  "}\n";
+                        "    ?s ?p ?o .\n" +
+                        "}\n";
                 preparedQuery = conn.prepareTupleQuery(query);
                 preparedQuery.evaluate(new SPARQLResultsJSONWriter(System.out));
+
+                conn.setNamespace("bar", "http://www.example.com/foo");
+                System.out.println("Found namespace for 'bar:' :" + conn.getNamespace("bar"));
+
             } finally {
                 httpRepository.shutDown();
             }

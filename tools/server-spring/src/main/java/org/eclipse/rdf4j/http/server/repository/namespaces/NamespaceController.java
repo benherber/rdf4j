@@ -39,6 +39,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -50,131 +51,140 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 @RestController
 public class NamespaceController extends AbstractController {
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public NamespaceController() throws ApplicationContextException {
-		setSupportedMethods(METHOD_GET, METHOD_HEAD, "PUT", "DELETE");
-	}
+    public NamespaceController() throws ApplicationContextException {
+        setSupportedMethods(METHOD_GET, METHOD_HEAD, "PUT", "DELETE");
+    }
 
-	@RequestMapping("/repositories/{repository}/namespaces/{nsPrefix}")
-	public ModelAndView delegateRequest(
-			@NonNull final HttpServletRequest request,
-			@NonNull final HttpServletResponse response,
-			@NonNull @PathVariable("repository") final String ignore,
-			@NonNull @PathVariable("nsPrefix") final String ignore2
-	) throws Exception {
-		return handleRequest(request, response);
-	}
+    @RequestMapping("/repositories/{repository}/namespaces/{nsPrefix}")
+    public ModelAndView delegateRequest(
+            @NonNull final HttpServletRequest request,
+            @NonNull final HttpServletResponse response,
+            @NonNull @PathVariable("repository") final String ignore,
+            @NonNull @PathVariable("nsPrefix") final String ignore2
+    ) throws Exception {
+        return handleRequest(request, response);
+    }
 
-	@Override
-	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		String pathInfoStr = request.getPathInfo();
-		String prefix = pathInfoStr.substring(pathInfoStr.lastIndexOf('/') + 1);
+    @Override
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        String pathInfoStr = request.getPathInfo();
+        final String prefix;
+        if (pathInfoStr != null) {
+            prefix = pathInfoStr.substring(pathInfoStr.lastIndexOf('/') + 1);
+        } else {
+            final Object pathVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-		String reqMethod = request.getMethod();
+            //noinspection unchecked
+            prefix = ((Map<String, String>) pathVariables).get("nsPrefix");
+        }
 
-		if (METHOD_HEAD.equals(reqMethod)) {
-			logger.info("HEAD namespace for prefix {}", prefix);
+        String reqMethod = request.getMethod();
 
-			Map<String, Object> model = new HashMap<>();
-			return new ModelAndView(SimpleResponseView.getInstance(), model);
-		}
 
-		if (METHOD_GET.equals(reqMethod)) {
-			logger.info("GET namespace for prefix {}", prefix);
-			return getExportNamespaceResult(request, prefix);
-		} else if ("PUT".equals(reqMethod)) {
-			logger.info("PUT prefix {}", prefix);
-			return getUpdateNamespaceResult(request, prefix);
-		} else if ("DELETE".equals(reqMethod)) {
-			logger.info("DELETE prefix {}", prefix);
-			return getRemoveNamespaceResult(request, prefix);
-		} else {
-			throw new ServerHTTPException("Unexpected request method: " + reqMethod);
-		}
-	}
+        if (METHOD_HEAD.equals(reqMethod)) {
+            logger.info("HEAD namespace for prefix {}", prefix);
 
-	private ModelAndView getExportNamespaceResult(HttpServletRequest request, String prefix)
-			throws ServerHTTPException, ClientHTTPException {
-		try (RepositoryConnection repositoryCon = RepositoryInterceptor.getRepositoryConnection(request)) {
-			String namespace = repositoryCon.getNamespace(prefix);
+            Map<String, Object> model = new HashMap<>();
+            return new ModelAndView(SimpleResponseView.getInstance(), model);
+        }
 
-			if (namespace == null) {
-				throw new ClientHTTPException(SC_NOT_FOUND, "Undefined prefix: " + prefix);
-			}
+        if (METHOD_GET.equals(reqMethod)) {
+            logger.info("GET namespace for prefix {}", prefix);
+            return getExportNamespaceResult(request, prefix);
+        } else if ("PUT".equals(reqMethod)) {
+            logger.info("PUT prefix {}", prefix);
+            return getUpdateNamespaceResult(request, prefix);
+        } else if ("DELETE".equals(reqMethod)) {
+            logger.info("DELETE prefix {}", prefix);
+            return getRemoveNamespaceResult(request, prefix);
+        } else {
+            throw new ServerHTTPException("Unexpected request method: " + reqMethod);
+        }
+    }
 
-			Map<String, Object> model = new HashMap<>();
-			model.put(SimpleResponseView.CONTENT_KEY, namespace);
+    private ModelAndView getExportNamespaceResult(HttpServletRequest request, String prefix)
+            throws ServerHTTPException, ClientHTTPException {
+        try (RepositoryConnection repositoryCon = RepositoryInterceptor.getRepositoryConnection(request)) {
+            String namespace = repositoryCon.getNamespace(prefix);
 
-			return new ModelAndView(SimpleResponseView.getInstance(), model);
-		} catch (RepositoryException e) {
-			throw new ServerHTTPException("Repository error: " + e.getMessage(), e);
-		}
-	}
+            if (namespace == null) {
+                throw new ClientHTTPException(SC_NOT_FOUND, "Undefined prefix: " + prefix);
+            }
 
-	private ModelAndView getUpdateNamespaceResult(HttpServletRequest request, String prefix)
-			throws IOException, ClientHTTPException, ServerHTTPException {
-		String namespace = IOUtil.readString(request.getReader());
-		namespace = namespace.trim();
+            Map<String, Object> model = new HashMap<>();
+            model.put(SimpleResponseView.CONTENT_KEY, namespace);
 
-		validateUpdateNamespaceData(prefix, namespace);
+            return new ModelAndView(SimpleResponseView.getInstance(), model);
+        } catch (RepositoryException e) {
+            throw new ServerHTTPException("Repository error: " + e.getMessage(), e);
+        }
+    }
 
-		try (RepositoryConnection repositoryCon = RepositoryInterceptor.getRepositoryConnection(request)) {
-			repositoryCon.setNamespace(prefix, namespace);
-		} catch (RepositoryException e) {
-			throw new ServerHTTPException("Repository error: " + e.getMessage(), e);
-		}
+    private ModelAndView getUpdateNamespaceResult(HttpServletRequest request, String prefix)
+            throws IOException, ClientHTTPException, ServerHTTPException {
+        String namespace = IOUtil.readString(request.getReader());
+        namespace = namespace.trim();
 
-		return new ModelAndView(EmptySuccessView.getInstance());
-	}
+        validateUpdateNamespaceData(prefix, namespace);
 
-	private ModelAndView getRemoveNamespaceResult(HttpServletRequest request, String prefix)
-			throws ServerHTTPException {
-		try (RepositoryConnection repositoryCon = RepositoryInterceptor.getRepositoryConnection(request)) {
-			repositoryCon.removeNamespace(prefix);
-		} catch (RepositoryException e) {
-			throw new ServerHTTPException("Repository error: " + e.getMessage(), e);
-		}
+        try (RepositoryConnection repositoryCon = RepositoryInterceptor.getRepositoryConnection(request)) {
+            repositoryCon.setNamespace(prefix, namespace);
+        } catch (RepositoryException e) {
+            throw new ServerHTTPException("Repository error: " + e.getMessage(), e);
+        }
 
-		return new ModelAndView(EmptySuccessView.getInstance());
-	}
+        return new ModelAndView(EmptySuccessView.getInstance());
+    }
 
-	private void validateUpdateNamespaceData(String prefix, String namespace) throws ClientHTTPException {
-		if (namespace.isEmpty()) {
-			throw new ClientHTTPException(SC_BAD_REQUEST, "No namespace name found in request body");
-		}
+    private ModelAndView getRemoveNamespaceResult(HttpServletRequest request, String prefix)
+            throws ServerHTTPException {
+        try (RepositoryConnection repositoryCon = RepositoryInterceptor.getRepositoryConnection(request)) {
+            repositoryCon.removeNamespace(prefix);
+        } catch (RepositoryException e) {
+            throw new ServerHTTPException("Repository error: " + e.getMessage(), e);
+        }
 
-		if (!isValidPrefix(prefix)) {
-			throw new ClientHTTPException(SC_BAD_REQUEST, "Prefix not valid");
-		}
+        return new ModelAndView(EmptySuccessView.getInstance());
+    }
 
-		if (!isValidNamespaceIri(namespace)) {
-			throw new ClientHTTPException(SC_BAD_REQUEST, "Namespace not valid");
-		}
-	}
+    private void validateUpdateNamespaceData(String prefix, String namespace) throws ClientHTTPException {
+        if (namespace.isEmpty()) {
+            throw new ClientHTTPException(SC_BAD_REQUEST, "No namespace name found in request body");
+        }
 
-	private static final String PN_CHARS_BASE = "[A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF"
-			+ "\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
-			+ "\uD800\uDC00-\uDB7F\uDFFF]"; // <- \u10000-\uEFFFF expressed with surrogate pairs
-	private static final String PN_CHARS_U = "(?:" + PN_CHARS_BASE + "|_)";
-	private static final String PN_CHARS = "(?:" + PN_CHARS_U + "|[0-9\u0300-\u036F\u203F-\u2040\u00B7-])";
-	private static final String PN_PREFIX = PN_CHARS_BASE + "(?:(?:" + PN_CHARS + "|\\.)*" + PN_CHARS + ")?";
-	private static Pattern PREFIX_PATTERN = Pattern.compile(PN_PREFIX);
+        if (!isValidPrefix(prefix)) {
+            throw new ClientHTTPException(SC_BAD_REQUEST, "Prefix not valid");
+        }
 
-	private static boolean isValidPrefix(String value) {
-		if (value.isEmpty())
-			return true;
-		Matcher matcher = PREFIX_PATTERN.matcher(value);
-		return (matcher.find() && matcher.start() == 0 && matcher.end() == value.length());
-	}
+        if (!isValidNamespaceIri(namespace)) {
+            throw new ClientHTTPException(SC_BAD_REQUEST, "Namespace not valid");
+        }
+    }
 
-	private boolean isValidNamespaceIri(String namespace) {
-		try {
-			return new ParsedIRI(namespace).isAbsolute();
-		} catch (URISyntaxException e) {
-			logger.debug("Namespace: {} isn't parseable.", namespace, e);
-			return false;
-		}
-	}
+    private static final String PN_CHARS_BASE = "[A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF"
+                                                + "\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
+                                                + "\uD800\uDC00-\uDB7F\uDFFF]"; // <- \u10000-\uEFFFF expressed with surrogate pairs
+    private static final String PN_CHARS_U = "(?:" + PN_CHARS_BASE + "|_)";
+    private static final String PN_CHARS = "(?:" + PN_CHARS_U + "|[0-9\u0300-\u036F\u203F-\u2040\u00B7-])";
+    private static final String PN_PREFIX = PN_CHARS_BASE + "(?:(?:" + PN_CHARS + "|\\.)*" + PN_CHARS + ")?";
+    private static Pattern PREFIX_PATTERN = Pattern.compile(PN_PREFIX);
+
+    private static boolean isValidPrefix(String value) {
+        if (value.isEmpty())
+            return true;
+        Matcher matcher = PREFIX_PATTERN.matcher(value);
+        return (matcher.find() && matcher.start() == 0 && matcher.end() == value.length());
+    }
+
+    private boolean isValidNamespaceIri(String namespace) {
+        try {
+            return new ParsedIRI(namespace).isAbsolute();
+        } catch (URISyntaxException e) {
+            logger.debug("Namespace: {} isn't parseable.", namespace, e);
+            return false;
+        }
+    }
 }
