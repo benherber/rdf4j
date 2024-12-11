@@ -68,22 +68,25 @@ public class RepositoryInterceptor extends ServerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse respons, Object handler) throws Exception {
-//		String pathInfoStr = request.getPathInfo();
-//		logger.debug("path info: {}", pathInfoStr);
-//
-//		repositoryID = null;
-//
-//		if (pathInfoStr != null && !pathInfoStr.equals("/")) {
-//			String[] pathInfo = pathInfoStr.substring(1).split("/");
-//			if (pathInfo.length > 0) {
-//				repositoryID = pathInfo[0];
-//				logger.debug("repositoryID is '{}'", repositoryID);
-//			}
-//		}
-		final Object pathVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+		final String pathInfoStr = request.getPathInfo();
+		logger.debug("path info: {}", pathInfoStr);
 
-        //noinspection unchecked
-        repositoryID = ((Map<String, String>) pathVariables).get(REPOSITORY_KEY);
+		repositoryID = null;
+
+		if (pathInfoStr != null && !pathInfoStr.equals("/")) {
+			String[] pathInfo = pathInfoStr.substring(1).split("/");
+			if (pathInfo.length > 0) {
+				repositoryID = pathInfo[0];
+			}
+		}
+
+		if (repositoryID == null) {
+			final Object pathVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+
+			//noinspection unchecked
+			repositoryID = ((Map<String, String>) pathVariables).get(REPOSITORY_KEY);
+		}
+
 		if (repositoryID != null) {
 			logger.debug("repositoryID is '{}'", repositoryID);
 		}

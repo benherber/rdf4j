@@ -47,7 +47,8 @@
 		<module>examples</module>
 		<!-- for maven Central deployment it is important that bom is the last module -->
 		<module>bom</module>
-	</modules>
+        <module>testsuites/testapi</module>
+    </modules>
 	<profiles>
 		<profile>
 			<id>ossrh</id>

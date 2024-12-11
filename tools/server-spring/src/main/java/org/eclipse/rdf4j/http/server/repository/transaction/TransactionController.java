@@ -95,6 +95,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -238,6 +239,19 @@ public class TransactionController extends AbstractController implements Disposa
 				logger.warn("could not determine transaction id from path info {} ", pathInfoStr);
 			}
 		}
+
+		if (txnID == null) {
+            final Object pathVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+
+            //noinspection unchecked
+            final String xidStr = ((Map<String, String>) pathVariables).get("xid");
+            try {
+                txnID = UUID.fromString(xidStr);
+                logger.debug("txnID is '{}'", txnID);
+            } catch (IllegalArgumentException e) {
+                throw new ClientHTTPException(SC_BAD_REQUEST, "not a valid transaction id: " + xidStr);
+            }
+        }
 
 		return txnID;
 	}
