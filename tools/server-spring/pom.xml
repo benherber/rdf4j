@@ -10,7 +10,7 @@
 	<name>RDF4J: HTTP server - core</name>
 	<description>HTTP server implementing a REST-style protocol</description>
 	<properties>
-		<spring.boot.version>2.7.16</spring.boot.version>
+		<spring.boot.version>2.7.18</spring.boot.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -45,11 +45,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdf4j-rio-rdfjson</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

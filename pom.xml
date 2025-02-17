@@ -47,6 +47,7 @@
 		<module>examples</module>
 		<!-- for maven Central deployment it is important that bom is the last module -->
 		<module>bom</module>
+		<module>tools/server-jar</module>
 	</modules>
 	<profiles>
 		<profile>
