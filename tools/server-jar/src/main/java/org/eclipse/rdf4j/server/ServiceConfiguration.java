@@ -4,6 +4,7 @@ import org.eclipse.rdf4j.common.app.AppConfiguration;
 import org.eclipse.rdf4j.repository.manager.LocalRepositoryManager;
 import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +26,7 @@ public class ServiceConfiguration {
 
     @Bean(name = "rdf4jRepositoryManager", initMethod = "init", destroyMethod = "shutDown")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    @Autowired
-    public RepositoryManager rdf4jRepositoryManager(@NonNull final AppConfiguration appConfig) {
+    public RepositoryManager rdf4jRepositoryManager(@Autowired @Qualifier("commonAppConfig") @NonNull final AppConfiguration appConfig) {
         Objects.requireNonNull(appConfig, "Application config was not properly initialized!");
 
         return new LocalRepositoryManager(appConfig.getDataDir());

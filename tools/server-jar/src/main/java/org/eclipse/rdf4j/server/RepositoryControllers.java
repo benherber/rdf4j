@@ -14,6 +14,7 @@ import org.eclipse.rdf4j.http.server.repository.transaction.TransactionControlle
 import org.eclipse.rdf4j.http.server.repository.transaction.TransactionStartController;
 import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -26,17 +27,9 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUES
 public class RepositoryControllers {
 
     @NonNull
-    private final RepositoryManager repositoryManager;
-
-    @Autowired
-    public RepositoryControllers(@NonNull final RepositoryManager repositoryManager) {
-        this.repositoryManager = repositoryManager;
-    }
-
-    @NonNull
     @Bean(name = "rdf4jRepositoryInterceptor")
-    @Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
-    public RepositoryInterceptor rdf4jRepositoryInterceptor() {
+    @Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.DEFAULT)
+    public RepositoryInterceptor rdf4jRepositoryInterceptor(@NonNull @Autowired @Qualifier("rdf4jRepositoryManager") final RepositoryManager repositoryManager) {
         final RepositoryInterceptor interceptor = new RepositoryInterceptor();
         interceptor.setRepositoryManager(repositoryManager);
 
@@ -45,7 +38,7 @@ public class RepositoryControllers {
 
     @NonNull
     @Bean(name = "rdf4jRepositoryListController")
-    public RepositoryController repositoryController() {
+    public RepositoryController repositoryController(@NonNull @Autowired @Qualifier("rdf4jRepositoryManager") final RepositoryManager repositoryManager) {
         final RepositoryController controller = new RepositoryController();
         controller.setRepositoryManager(repositoryManager);
 
@@ -54,7 +47,7 @@ public class RepositoryControllers {
 
     @NonNull
     @Bean(name = "rdf4jRepositoryController")
-    public RepositoryListController repositoryListController() {
+    public RepositoryListController repositoryListController(@NonNull @Autowired @Qualifier("rdf4jRepositoryManager") final RepositoryManager repositoryManager) {
         final RepositoryListController controller = new RepositoryListController();
         controller.setRepositoryManager(repositoryManager);
 
@@ -63,7 +56,7 @@ public class RepositoryControllers {
 
     @NonNull
     @Bean(name = "rdf4jRepositoryConfigController")
-    public ConfigController rdf4jRepositoryConfigController() {
+    public ConfigController rdf4jRepositoryConfigController(@NonNull @Autowired @Qualifier("rdf4jRepositoryManager") final RepositoryManager repositoryManager) {
         final ConfigController controller = new ConfigController();
         controller.setRepositoryManager(repositoryManager);
 

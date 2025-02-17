@@ -15,6 +15,7 @@ import org.eclipse.rdf4j.http.server.repository.statements.StatementsController;
 import org.eclipse.rdf4j.http.server.repository.transaction.TransactionController;
 import org.eclipse.rdf4j.http.server.repository.transaction.TransactionStartController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -29,9 +30,8 @@ import static org.eclipse.rdf4j.http.server.repository.RepositoryInterceptor.REP
 @Configuration
 public class Routes {
     @NonNull
-    @Autowired
     @Bean(name = "rdf4jProtocolUrlMapping")
-    public HandlerMapping rdf4jProtocolUrlMapping(@NonNull final ProtocolController protocolController) {
+    public HandlerMapping rdf4jProtocolUrlMapping(@NonNull @Autowired @Qualifier("rdf4jProtocolController") final ProtocolController protocolController) {
         final Map<String, Object> urlMap = new LinkedHashMap<>();
 
         urlMap.put("/protocol", protocolController);
@@ -46,9 +46,8 @@ public class Routes {
     }
 
     @NonNull
-    @Autowired
     @Bean(name = "rdf4jRepositoryListUrlMapping")
-    public HandlerMapping rdf4jRepositoryListUrlMapping(@NonNull final RepositoryListController repositoryListController) {
+    public HandlerMapping rdf4jRepositoryListUrlMapping(@NonNull @Autowired @Qualifier("rdf4jRepositoryListController") final RepositoryListController repositoryListController) {
         final Map<String, Object> urlMap = new LinkedHashMap<>();
 
         urlMap.put("/repositories", repositoryListController);
@@ -62,20 +61,19 @@ public class Routes {
     }
 
     @NonNull
-    @Autowired
     @Bean(name = "rdf4jRepositoryUrlMapping")
     public HandlerMapping rdf4jRepositoryUrlMapping(
-            @NonNull final RepositoryInterceptor repositoryInterceptor,
-            @NonNull final RepositoryController repositoryController,
-            @NonNull final ConfigController repositoryConfigController,
-            @NonNull final ContextsController contextsController,
-            @NonNull final NamespacesController namespacesController,
-            @NonNull final NamespaceController namespaceController,
-            @NonNull final SizeController sizeController,
-            @NonNull final StatementsController statementsController,
-            @NonNull final GraphController graphController,
-            @NonNull final TransactionController transactionController,
-            @NonNull final TransactionStartController transactionStartController
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryInterceptor") final RepositoryInterceptor repositoryInterceptor,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryNamespaceController") final RepositoryController repositoryController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryNamespacesController") final ConfigController repositoryConfigController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryConfigController") final ContextsController contextsController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryContextsController") final NamespacesController namespacesController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryStatementsController") final NamespaceController namespaceController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryContextsController") final SizeController sizeController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryGraphController") final StatementsController statementsController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositorySizeController") final GraphController graphController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryTransactionStartController") final TransactionController transactionController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryTransactionController") final TransactionStartController transactionStartController
     ) {
         final Map<String, Object> urlMap = new LinkedHashMap<>();
 
