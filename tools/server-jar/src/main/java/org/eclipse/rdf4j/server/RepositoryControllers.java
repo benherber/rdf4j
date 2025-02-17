@@ -1,0 +1,121 @@
+package org.eclipse.rdf4j.server;
+
+import org.eclipse.rdf4j.http.server.repository.RepositoryController;
+import org.eclipse.rdf4j.http.server.repository.RepositoryInterceptor;
+import org.eclipse.rdf4j.http.server.repository.RepositoryListController;
+import org.eclipse.rdf4j.http.server.repository.config.ConfigController;
+import org.eclipse.rdf4j.http.server.repository.contexts.ContextsController;
+import org.eclipse.rdf4j.http.server.repository.graph.GraphController;
+import org.eclipse.rdf4j.http.server.repository.namespaces.NamespaceController;
+import org.eclipse.rdf4j.http.server.repository.namespaces.NamespacesController;
+import org.eclipse.rdf4j.http.server.repository.size.SizeController;
+import org.eclipse.rdf4j.http.server.repository.statements.StatementsController;
+import org.eclipse.rdf4j.http.server.repository.transaction.TransactionController;
+import org.eclipse.rdf4j.http.server.repository.transaction.TransactionStartController;
+import org.eclipse.rdf4j.repository.manager.RepositoryManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.lang.NonNull;
+
+import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
+
+@Configuration
+public class RepositoryControllers {
+
+    @NonNull
+    private final RepositoryManager repositoryManager;
+
+    @Autowired
+    public RepositoryControllers(@NonNull final RepositoryManager repositoryManager) {
+        this.repositoryManager = repositoryManager;
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryInterceptor")
+    @Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
+    public RepositoryInterceptor rdf4jRepositoryInterceptor() {
+        final RepositoryInterceptor interceptor = new RepositoryInterceptor();
+        interceptor.setRepositoryManager(repositoryManager);
+
+        return interceptor;
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryListController")
+    public RepositoryController repositoryController() {
+        final RepositoryController controller = new RepositoryController();
+        controller.setRepositoryManager(repositoryManager);
+
+        return controller;
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryController")
+    public RepositoryListController repositoryListController() {
+        final RepositoryListController controller = new RepositoryListController();
+        controller.setRepositoryManager(repositoryManager);
+
+        return controller;
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryConfigController")
+    public ConfigController rdf4jRepositoryConfigController() {
+        final ConfigController controller = new ConfigController();
+        controller.setRepositoryManager(repositoryManager);
+
+        return controller;
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryContextsController")
+    public ContextsController rdf4jRepositoryContextsController() {
+        return new ContextsController();
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryNamespacesController")
+    public NamespacesController rdf4jRepositoryNamespacesController() {
+        return new NamespacesController();
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryNamespaceController")
+    public NamespaceController rdf4jRepositoryNamespaceController() {
+        return new NamespaceController();
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositorySizeController")
+    public SizeController rdf4jRepositorySizeController() {
+        return new SizeController();
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryStatementsController")
+    public StatementsController rdf4jRepositoryStatementsController() {
+        return new StatementsController();
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryGraphController")
+    public GraphController rdf4jRepositoryGraphController() {
+        return new GraphController();
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryTransactionController")
+    public TransactionController rdf4jRepositoryTransactionController() {
+        return new TransactionController();
+    }
+
+    @NonNull
+    @Bean(name = "rdf4jRepositoryTransactionStartController")
+    public TransactionStartController rdf4jRepositoryTransactionStartController() {
+        return new TransactionStartController();
+    }
+
+}
