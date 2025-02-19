@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 @Configuration
-public class InterceptorConfiguration implements WebMvcConfigurer {
+public class MvcConfiguration implements WebMvcConfigurer {
     @Override
     public void configureHandlerExceptionResolvers(@NonNull final List<HandlerExceptionResolver> resolvers) {
         resolvers.add(new ProtocolExceptionResolver());
