@@ -37,7 +37,7 @@ public class RepositoryControllers {
     }
 
     @NonNull
-    @Bean(name = "rdf4jRepositoryListController")
+    @Bean(name = "rdf4jRepositoryController")
     public RepositoryController repositoryController(@NonNull @Autowired @Qualifier("rdf4jRepositoryManager") final RepositoryManager repositoryManager) {
         final RepositoryController controller = new RepositoryController();
         controller.setRepositoryManager(repositoryManager);
@@ -46,7 +46,7 @@ public class RepositoryControllers {
     }
 
     @NonNull
-    @Bean(name = "rdf4jRepositoryController")
+    @Bean(name = "rdf4jRepositoryListController")
     public RepositoryListController repositoryListController(@NonNull @Autowired @Qualifier("rdf4jRepositoryManager") final RepositoryManager repositoryManager) {
         final RepositoryListController controller = new RepositoryListController();
         controller.setRepositoryManager(repositoryManager);
