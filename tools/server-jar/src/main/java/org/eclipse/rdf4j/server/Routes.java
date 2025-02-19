@@ -63,17 +63,17 @@ public class Routes {
     @NonNull
     @Bean(name = "rdf4jRepositoryUrlMapping")
     public HandlerMapping rdf4jRepositoryUrlMapping(
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryInterceptor") final RepositoryInterceptor repositoryInterceptor,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryNamespaceController") final RepositoryController repositoryController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryNamespacesController") final ConfigController repositoryConfigController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryConfigController") final ContextsController contextsController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryContextsController") final NamespacesController namespacesController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryStatementsController") final NamespaceController namespaceController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryContextsController") final SizeController sizeController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryGraphController") final StatementsController statementsController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositorySizeController") final GraphController graphController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryTransactionStartController") final TransactionController transactionController,
-            @NonNull @Autowired @Qualifier("rdf4jRepositoryTransactionController") final TransactionStartController transactionStartController
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryController") final RepositoryController repositoryController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryConfigController") final ConfigController repositoryConfigController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryContextsController") final ContextsController contextsController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryNamespacesController") final NamespacesController namespacesController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryNamespaceController") final NamespaceController namespaceController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositorySizeController") final SizeController sizeController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryStatementsController") final StatementsController statementsController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryGraphController") final GraphController graphController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryTransactionController") final TransactionController transactionController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryTransactionStartController") final TransactionStartController transactionStartController,
+            @NonNull @Autowired @Qualifier("rdf4jRepositoryInterceptor") final RepositoryInterceptor repositoryInterceptor
     ) {
         final Map<String, Object> urlMap = new LinkedHashMap<>();
 

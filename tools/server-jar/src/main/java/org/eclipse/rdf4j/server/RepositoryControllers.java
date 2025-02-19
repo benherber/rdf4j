@@ -15,20 +15,18 @@ import org.eclipse.rdf4j.http.server.repository.transaction.TransactionStartCont
 import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.lang.NonNull;
-
-import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
+import org.springframework.lang.Nullable;
 
 @Configuration
 public class RepositoryControllers {
 
     @NonNull
     @Bean(name = "rdf4jRepositoryInterceptor")
-    @Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.DEFAULT)
+//    @Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.DEFAULT) // FIXME!!!
     public RepositoryInterceptor rdf4jRepositoryInterceptor(@NonNull @Autowired @Qualifier("rdf4jRepositoryManager") final RepositoryManager repositoryManager) {
         final RepositoryInterceptor interceptor = new RepositoryInterceptor();
         interceptor.setRepositoryManager(repositoryManager);
@@ -107,8 +105,13 @@ public class RepositoryControllers {
 
     @NonNull
     @Bean(name = "rdf4jRepositoryTransactionStartController")
-    public TransactionStartController rdf4jRepositoryTransactionStartController() {
-        return new TransactionStartController();
+    public TransactionStartController rdf4jRepositoryTransactionStartController(
+            @Nullable @Value("${rdf4j.externalurl:#{null}}") final String externalUrl
+    ) {
+        final TransactionStartController transactionStartController = new TransactionStartController();
+        transactionStartController.setExternalUrl(externalUrl);
+
+        return transactionStartController;
     }
 
 }
