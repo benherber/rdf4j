@@ -20,13 +20,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Configuration
 public class RepositoryControllers {
 
     @NonNull
     @Bean(name = "rdf4jRepositoryInterceptor")
-//    @Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.DEFAULT) // FIXME!!!
+    @RequestScope
     public RepositoryInterceptor rdf4jRepositoryInterceptor(@NonNull @Autowired @Qualifier("rdf4jRepositoryManager") final RepositoryManager repositoryManager) {
         final RepositoryInterceptor interceptor = new RepositoryInterceptor();
         interceptor.setRepositoryManager(repositoryManager);
