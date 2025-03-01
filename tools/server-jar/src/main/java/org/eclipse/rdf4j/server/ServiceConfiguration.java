@@ -6,9 +6,11 @@ import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.lang.NonNull;
 
 import java.util.Objects;
@@ -30,5 +32,18 @@ public class ServiceConfiguration {
         Objects.requireNonNull(appConfig, "Application config was not properly initialized!");
 
         return new LocalRepositoryManager(appConfig.getDataDir());
+    }
+
+    @Bean(name = "messageSource")
+    public MessageSource messageSource() {
+        final ResourceBundleMessageSource bundle = new ResourceBundleMessageSource();
+
+        bundle.setBasenames(
+                "org.eclipse.rdf4j.http.server.messages",
+                "org.eclipse.rdf4j.common.webapp.system.messages",
+                "org.eclipse.rdf4j.common.webapp.messages"
+        );
+
+        return bundle;
     }
 }
