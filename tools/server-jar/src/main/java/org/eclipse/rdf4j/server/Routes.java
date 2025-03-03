@@ -34,7 +34,7 @@ public class Routes {
 	@Bean(name = "rdf4jProtocolUrlMapping")
 	public HandlerMapping rdf4jProtocolUrlMapping(
 			@NonNull @Qualifier("rdf4jProtocolController") final ProtocolController protocolController) {
-		final Map<String, Object> urlMap = new LinkedHashMap<>();
+		final Map<String, Object> urlMap = new LinkedHashMap<>(1);
 
 		urlMap.put("/protocol", protocolController);
 
@@ -52,7 +52,7 @@ public class Routes {
 	@Bean(name = "rdf4jRepositoryListUrlMapping")
 	public HandlerMapping rdf4jRepositoryListUrlMapping(
 			@NonNull @Qualifier("rdf4jRepositoryListController") final RepositoryListController repositoryListController) {
-		final Map<String, Object> urlMap = new LinkedHashMap<>();
+		final Map<String, Object> urlMap = new LinkedHashMap<>(1);
 
 		urlMap.put("/repositories", repositoryListController);
 
@@ -80,7 +80,7 @@ public class Routes {
 			@NonNull @Qualifier("rdf4jRepositoryTransactionStartController") final TransactionStartController transactionStartController,
 			@NonNull @Qualifier("rdf4jRepositoryInterceptor") final RepositoryInterceptor repositoryInterceptor
 	) {
-		final Map<String, Object> urlMap = new LinkedHashMap<>();
+		final Map<String, Object> urlMap = new LinkedHashMap<>(11);
 
 		final String repositoryPrefix = "/repositories/{" + REPOSITORY_KEY + "}";
 		urlMap.put(repositoryPrefix + "/namespaces/{nsPrefix}", namespaceController);
