@@ -227,7 +227,7 @@ public class TransactionController extends AbstractController implements Disposa
 		if (txnID == null) {
 			final Object pathVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-			//noinspection unchecked
+			// noinspection unchecked
 			final String xidStr = ((Map<String, String>) pathVariables).get("xid");
 			try {
 				txnID = UUID.fromString(xidStr);
@@ -236,9 +236,9 @@ public class TransactionController extends AbstractController implements Disposa
 			}
 		}
 
-        logger.debug("txnID is '{}'", txnID);
+		logger.debug("txnID is '{}'", txnID);
 
-        return txnID;
+		return txnID;
 	}
 
 	private ModelAndView processModificationOperation(Transaction transaction, Action action,

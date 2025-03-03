@@ -8,12 +8,10 @@ import org.springframework.context.annotation.PropertySource;
 @Experimental
 @SpringBootApplication
 @PropertySource(
-        value = "classpath:org/eclipse/rdf4j/http/server/application.properties",
-        ignoreResourceNotFound = true,
-        name = "org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+		value = "classpath:org/eclipse/rdf4j/http/server/application.properties", ignoreResourceNotFound = true, name = "org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
 )
 public class Application {
-    public static void main(final String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+	public static void main(final String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
 }

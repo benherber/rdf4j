@@ -85,7 +85,7 @@ public class RepositoryInterceptor extends ServerInterceptor {
 		if (repositoryID == null) {
 			final Object pathVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-			//noinspection unchecked
+			// noinspection unchecked
 			repositoryID = ((Map<String, String>) pathVariables).get(REPOSITORY_KEY);
 		}
 

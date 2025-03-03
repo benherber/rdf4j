@@ -62,7 +62,7 @@ public class NamespaceController extends AbstractController {
 		} else {
 			final Object pathVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-			//noinspection unchecked
+			// noinspection unchecked
 			prefix = ((Map<String, String>) pathVariables).get("nsPrefix");
 		}
 

@@ -7,9 +7,9 @@ import org.springframework.lang.NonNull;
 
 @Configuration
 public class ProtocolControllers {
-    @NonNull
-    @Bean(name = "rdf4jProtocolController")
-    public ProtocolController rdf4jProtocolController() {
-        return new ProtocolController();
-    }
+	@NonNull
+	@Bean(name = "rdf4jProtocolController")
+	public ProtocolController rdf4jProtocolController() {
+		return new ProtocolController();
+	}
 }
